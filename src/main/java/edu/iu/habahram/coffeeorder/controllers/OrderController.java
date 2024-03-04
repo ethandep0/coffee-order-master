@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = "https://ethandep0.github.io")
 @RequestMapping("/orders")
 public class OrderController {
     private OrderRepository orderRepository;
