@@ -7,6 +7,7 @@ import edu.iu.habahram.coffeeorder.security.TokenService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -29,7 +30,9 @@ public class AuthenticationController {
     @PostMapping("/signup")
     public void signup(@RequestBody Customer customer) {
         try {
-            customerRepository.save(customer);
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            String passwordEncoded = encoder.encode(customer.getPassword());
+            customer.setPassword(passwordEncoded);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -38,10 +41,7 @@ public class AuthenticationController {
     @PostMapping("/signin")
     public String login(@RequestBody Customer customer) {
         Authentication authentication = authenticationManager
-                .authenticate(
-                        new UsernamePasswordAuthenticationToken(
-                                customer.username()
-                                , customer.password()));
+                .authenticate(new UsernamePasswordAuthenticationToken(customer.getUsername(), customer.getPassword()));
         return tokenService.generateToken(authentication);
     }
 }
